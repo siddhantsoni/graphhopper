@@ -103,7 +103,7 @@ public class AStarBidirection extends AbstractBidirAlgo
     public void initFrom( int from, double weight )
     {
         currFrom = new AStarEntry(EdgeIterator.NO_EDGE, from, weight, weight);
-        weightApprox.setSourceNode(from);
+        weightApprox.setFrom(from);
         prioQueueOpenSetFrom.add(currFrom);
 
         if (currTo != null)
@@ -120,16 +120,13 @@ public class AStarBidirection extends AbstractBidirAlgo
                 bestWeightMapOther = bestWeightMapTo;
                 updateBestPath(GHUtility.getEdge(graph, from, currTo.adjNode), currTo, from);
             }
-        } else
+        } else if (currTo != null && currTo.adjNode == from)
         {
-            if (currTo != null && currTo.adjNode == from)
-            {
-                // special case of identical start and end
-                bestPath.sptEntry = currFrom;
-                bestPath.edgeTo = currTo;
-                finishedFrom = true;
-                finishedTo = true;
-            }
+            // special case of identical start and end
+            bestPath.sptEntry = currFrom;
+            bestPath.edgeTo = currTo;
+            finishedFrom = true;
+            finishedTo = true;
         }
     }
 
@@ -137,7 +134,7 @@ public class AStarBidirection extends AbstractBidirAlgo
     public void initTo( int to, double weight )
     {
         currTo = new AStarEntry(EdgeIterator.NO_EDGE, to, weight, weight);
-        weightApprox.setGoalNode(to);
+        weightApprox.setTo(to);
         prioQueueOpenSetTo.add(currTo);
 
         if (currFrom != null)
@@ -154,16 +151,13 @@ public class AStarBidirection extends AbstractBidirAlgo
                 bestWeightMapOther = bestWeightMapFrom;
                 updateBestPath(GHUtility.getEdge(graph, currFrom.adjNode, to), currFrom, to);
             }
-        } else
+        } else if (currFrom != null && currFrom.adjNode == to)
         {
-            if (currFrom != null && currFrom.adjNode == to)
-            {
-                // special case of identical start and end
-                bestPath.sptEntry = currFrom;
-                bestPath.edgeTo = currTo;
-                finishedFrom = true;
-                finishedTo = true;
-            }
+            // special case of identical start and end
+            bestPath.sptEntry = currFrom;
+            bestPath.edgeTo = currTo;
+            finishedFrom = true;
+            finishedTo = true;
         }
     }
 
@@ -241,19 +235,19 @@ public class AStarBidirection extends AbstractBidirAlgo
         {
             if (!accept(iter, currEdge.edge))
                 continue;
-
-            int neighborNode = iter.getAdjNode();
-            int traversalId = traversalMode.createTraversalId(iter, reverse);
+            
             // TODO performance: check if the node is already existent in the opposite direction
             // then we could avoid the approximation as we already know the exact complete path!
             double alreadyVisitedWeight = weighting.calcWeight(iter, reverse, currEdge.edge)
                     + currEdge.getWeightOfVisitedPath();
             if (Double.isInfinite(alreadyVisitedWeight))
                 continue;
-
+            
+            int traversalId = traversalMode.createTraversalId(iter, reverse);
             AStarEntry ase = bestWeightMap.get(traversalId);
             if (ase == null || ase.getWeightOfVisitedPath() > alreadyVisitedWeight)
             {
+                int neighborNode = iter.getAdjNode();
                 double currWeightToGoal = weightApprox.approximate(neighborNode, reverse);
                 double estimationFullWeight = alreadyVisitedWeight + currWeightToGoal;
                 if (ase == null)
@@ -262,9 +256,9 @@ public class AStarBidirection extends AbstractBidirAlgo
                     bestWeightMap.put(traversalId, ase);
                 } else
                 {
-                    assert (ase.weight > 0.999999 * estimationFullWeight) : "Inconsistent distance estimate "
-                            + ase.weight + " vs " + estimationFullWeight + " (" + ase.weight / estimationFullWeight + "), and:"
-                            + ase.getWeightOfVisitedPath() + " vs " + alreadyVisitedWeight + " (" + ase.getWeightOfVisitedPath() / alreadyVisitedWeight + ")";
+//                    assert (ase.weight > 0.9999999 * estimationFullWeight) : "Inconsistent distance estimate. It is expected weight >= estimationFullWeight but was "
+//                            + ase.weight + " < " + estimationFullWeight + " (" + ase.weight / estimationFullWeight + "), and weightOfVisitedPath:"
+//                            + ase.weightOfVisitedPath + " vs. alreadyVisitedWeight:" + alreadyVisitedWeight + " (" + ase.weightOfVisitedPath / alreadyVisitedWeight + ")";
                     prioQueueOpenSet.remove(ase);
                     ase.edge = iter.getEdge();
                     ase.weight = estimationFullWeight;
@@ -297,12 +291,9 @@ public class AStarBidirection extends AbstractBidirAlgo
             {
                 entryCurrent = (AStar.AStarEntry) entryCurrent.parent;
                 newWeight -= weighting.calcWeight(edgeState, reverse, EdgeIterator.NO_EDGE);
-            } else
-            {
-                // we detected a u-turn at meeting point, skip if not supported
+            } else // we detected a u-turn at meeting point, skip if not supported
                 if (!traversalMode.hasUTurnSupport())
                     return;
-            }
         }
 
         if (newWeight < bestPath.getWeight())
@@ -317,6 +308,6 @@ public class AStarBidirection extends AbstractBidirAlgo
     @Override
     public String getName()
     {
-        return Parameters.Algorithms.ASTAR_BI;
+        return Parameters.Algorithms.ASTAR_BI + "|" + weightApprox;
     }
 }

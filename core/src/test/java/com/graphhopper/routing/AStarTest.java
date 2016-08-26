@@ -42,12 +42,20 @@ public class AStarTest extends AbstractRoutingAlgorithmTester
     public static Collection<Object[]> configs()
     {
         return Arrays.asList(new Object[][]
-                {
-                        {TraversalMode.NODE_BASED},
-                        {TraversalMode.EDGE_BASED_1DIR},
-                        {TraversalMode.EDGE_BASED_2DIR},
-                        {TraversalMode.EDGE_BASED_2DIR_UTURN}
-                });
+        {
+            {
+                TraversalMode.NODE_BASED
+            },
+            {
+                TraversalMode.EDGE_BASED_1DIR
+            },
+            {
+                TraversalMode.EDGE_BASED_2DIR
+            },
+            {
+                TraversalMode.EDGE_BASED_2DIR_UTURN
+            }
+        });
     }
 
     private final TraversalMode traversalMode;
@@ -66,6 +74,12 @@ public class AStarTest extends AbstractRoutingAlgorithmTester
             public RoutingAlgorithm createAlgo( Graph g, AlgorithmOptions opts )
             {
                 return new AStar(g, opts.getFlagEncoder(), opts.getWeighting(), traversalMode);
+            }
+
+            @Override
+            public RoutingAlgorithmFactory getOriginalRAFactory()
+            {
+                return this;
             }
         };
     }

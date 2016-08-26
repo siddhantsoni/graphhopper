@@ -84,9 +84,7 @@ class RAMIntDataAccess extends AbstractDataAccess
     public RAMIntDataAccess create( long bytes )
     {
         if (segments.length > 0)
-        {
             throw new IllegalThreadStateException("already created");
-        }
 
         // initialize transient values
         setSegmentSize(segmentSizeInBytes);
@@ -250,13 +248,14 @@ class RAMIntDataAccess extends AbstractDataAccess
         if (bytePos % 4 != 0 && bytePos % 4 != 2)
             throw new IllegalMonitorStateException("bytePos of wrong multiple for RAMInt " + bytePos);
 
-        long tmpIndex = bytePos >>> 1;
+        long tmpIndex = bytePos >>> 2;
         int bufferIndex = (int) (tmpIndex >>> segmentSizeIntsPower);
         int index = (int) (tmpIndex & indexDivisor);
-        if (tmpIndex * 2 == bytePos)
-            segments[bufferIndex][index] = value;
+        int oldVal = segments[bufferIndex][index];
+        if (tmpIndex * 4 == bytePos)
+            segments[bufferIndex][index] = oldVal & 0xFFFF0000 | value & 0x0000FFFF;
         else
-            segments[bufferIndex][index] = value << 16;
+            segments[bufferIndex][index] = oldVal & 0x0000FFFF | value << 16;
     }
 
     @Override
@@ -266,11 +265,11 @@ class RAMIntDataAccess extends AbstractDataAccess
         if (bytePos % 4 != 0 && bytePos % 4 != 2)
             throw new IllegalMonitorStateException("bytePos of wrong multiple for RAMInt " + bytePos);
 
-        long tmpIndex = bytePos >> 1;
+        long tmpIndex = bytePos >> 2;
         int bufferIndex = (int) (tmpIndex >> segmentSizeIntsPower);
         int index = (int) (tmpIndex & indexDivisor);
-        if (tmpIndex * 2 == bytePos)
-            return (short) segments[bufferIndex][index];
+        if (tmpIndex * 4 == bytePos)
+            return (short) (segments[bufferIndex][index] & 0x0000FFFFL);
         else
             return (short) (segments[bufferIndex][index] >> 16);
     }

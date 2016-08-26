@@ -77,16 +77,13 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
                 bestWeightMapOther = bestWeightMapTo;
                 updateBestPath(GHUtility.getEdge(graph, from, currTo.adjNode), currTo, from);
             }
-        } else
+        } else if (currTo != null && currTo.adjNode == from)
         {
-            if (currTo != null && currTo.adjNode == from)
-            {
-                // special case of identical start and end
-                bestPath.sptEntry = currFrom;
-                bestPath.edgeTo = currTo;
-                finishedFrom = true;
-                finishedTo = true;
-            }
+            // special case of identical start and end
+            bestPath.sptEntry = currFrom;
+            bestPath.edgeTo = currTo;
+            finishedFrom = true;
+            finishedTo = true;
         }
     }
 
@@ -103,16 +100,13 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
                 bestWeightMapOther = bestWeightMapFrom;
                 updateBestPath(GHUtility.getEdge(graph, currFrom.adjNode, to), currFrom, to);
             }
-        } else
+        } else if (currFrom != null && currFrom.adjNode == to)
         {
-            if (currFrom != null && currFrom.adjNode == to)
-            {
-                // special case of identical start and end
-                bestPath.sptEntry = currFrom;
-                bestPath.edgeTo = currTo;
-                finishedFrom = true;
-                finishedTo = true;
-            }
+            // special case of identical start and end
+            bestPath.sptEntry = currFrom;
+            bestPath.edgeTo = currTo;
+            finishedFrom = true;
+            finishedTo = true;
         }
     }
 
@@ -183,7 +177,7 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
     }
 
     void fillEdges( SPTEntry currEdge, PriorityQueue<SPTEntry> prioQueue,
-                    TIntObjectMap<SPTEntry> shortestWeightMap, EdgeExplorer explorer, boolean reverse )
+                    TIntObjectMap<SPTEntry> bestWeightMap, EdgeExplorer explorer, boolean reverse )
     {
         EdgeIterator iter = explorer.setBaseNode(currEdge.adjNode);
         while (iter.next())
@@ -196,12 +190,12 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
             if (Double.isInfinite(tmpWeight))
                 continue;
 
-            SPTEntry ee = shortestWeightMap.get(traversalId);
+            SPTEntry ee = bestWeightMap.get(traversalId);
             if (ee == null)
             {
                 ee = new SPTEntry(iter.getEdge(), iter.getAdjNode(), tmpWeight);
                 ee.parent = currEdge;
-                shortestWeightMap.put(traversalId, ee);
+                bestWeightMap.put(traversalId, ee);
                 prioQueue.add(ee);
             } else if (ee.weight > tmpWeight)
             {
@@ -239,12 +233,9 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
                 // prevents the path to contain the edge at the meeting point twice and subtract the weight (excluding turn weight => no previous edge)
                 entryCurrent = entryCurrent.parent;
                 newWeight -= weighting.calcWeight(edgeState, reverse, EdgeIterator.NO_EDGE);
-            } else
-            {
-                // we detected a u-turn at meeting point, skip if not supported
+            } else // we detected a u-turn at meeting point, skip if not supported
                 if (!traversalMode.hasUTurnSupport())
                     return;
-            }
         }
 
         if (newWeight < bestPath.getWeight())
@@ -291,7 +282,7 @@ public class DijkstraBidirectionRef extends AbstractBidirAlgo
         // inEdgeExplorer
     }
 
-    void setUpdateBestPath( boolean b )
+    protected void setUpdateBestPath( boolean b )
     {
         updateBestPath = b;
     }

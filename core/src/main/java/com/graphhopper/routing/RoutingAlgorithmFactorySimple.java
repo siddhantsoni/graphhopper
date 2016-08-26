@@ -80,6 +80,12 @@ public class RoutingAlgorithmFactorySimple implements RoutingAlgorithmFactory
         return ra;
     }
 
+    @Override
+    public RoutingAlgorithmFactory getOriginalRAFactory()
+    {
+        return this;
+    }
+
     private WeightApproximator getApproximation( String prop, AlgorithmOptions opts, NodeAccess na )
     {
         String approxAsStr = opts.getHints().get(prop + ".approximation", "BeelineSimplification");

@@ -120,7 +120,7 @@ public class Parameters
     }
 
     /**
-     * Properties for CH routing
+     * Properties for routing with contraction hierarchies speedup
      */
     public static final class CH
     {
@@ -137,5 +137,38 @@ public class Parameters
          * routing errors.
          */
         public static final String FORCE_HEADING = "ch.force_heading";
+    }
+
+    /**
+     * Properties for routing with landmark speedup
+     */
+    public static final class Landmark
+    {
+        /**
+         * This property name in HintsMap configures at runtime if CH routing should be ignored.
+         */
+        public static final String DISABLE = "lm.disable";
+        /**
+         * Specifies how many active landmarks should be used when routing
+         */
+        public static final String ACTIVE_COUNT = "lm.active_landmarks";
+        /**
+         * Default for active count
+         */
+        public static final String ACTIVE_COUNT_DEFAULT = ROUTING_INIT_PREFIX + "lm.active_landmarks";
+        /**
+         * Specifies how many landmarks should be created
+         */
+        public static final String COUNT = "prepare.lm.landmarks";
+        /**
+         * This property name configures at start if DISABLE parameter can have an effect.
+         */
+        public static final String INIT_DISABLING_ALLOWED = ROUTING_INIT_PREFIX + "lm.disabling_allowed";
+        /**
+         * A low level parameter to recalculate the best active landmark set every X calls. The
+         * higher it gets the less often a recalculation is trigger, which reduces CPU cycles but
+         * could let less optimal landmarks being involved. Default is 500.
+         */
+        public static final String REFRESH_COUNT = "lm.refresh_count";
     }
 }

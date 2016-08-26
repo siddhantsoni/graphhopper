@@ -829,50 +829,58 @@ public class PrepareContractionHierarchies extends AbstractAlgoPreparation imple
         return algo;
     }
 
-    private AStarBidirection createAStarBidirection(final Graph graph) {
-        return new AStarBidirection(graph, prepareFlagEncoder, prepareWeighting, traversalMode)
-                {
-                    @Override
-                    protected void initCollections( int nodes )
-                    {
-                        // algorithm with CH does not need that much memory pre allocated
-                        super.initCollections(Math.min(initialCollectionSize, nodes));
-                    }
-
-                    @Override
-                    protected boolean finished()
-                    {
-                        // we need to finish BOTH searches for CH!
-                        if (finishedFrom && finishedTo)
-                            return true;
-
-                        // changed finish condition for CH
-                        return currFrom.weight >= bestPath.getWeight() && currTo.weight >= bestPath.getWeight();
-                    }
-
-                    @Override
-                    protected Path createAndInitPath()
-                    {
-                        bestPath = new Path4CH(graph, graph.getBaseGraph(), flagEncoder);
-                        return bestPath;
-                    }
-
-                    @Override
-                    public String getName()
-                    {
-                        return "astarbiCH";
-                    }
-
-                    @Override
-
-                    public String toString()
-                    {
-                        return getName() + "|" + prepareWeighting;
-                    }
-                };
+    @Override
+    public RoutingAlgorithmFactory getOriginalRAFactory()
+    {
+        return this;
     }
 
-    private AbstractBidirAlgo createDijkstraBidirection(final Graph graph) {
+    private AStarBidirection createAStarBidirection( final Graph graph )
+    {
+        return new AStarBidirection(graph, prepareFlagEncoder, prepareWeighting, traversalMode)
+        {
+            @Override
+            protected void initCollections( int nodes )
+            {
+                // algorithm with CH does not need that much memory pre allocated
+                super.initCollections(Math.min(initialCollectionSize, nodes));
+            }
+
+            @Override
+            protected boolean finished()
+            {
+                // we need to finish BOTH searches for CH!
+                if (finishedFrom && finishedTo)
+                    return true;
+
+                // changed finish condition for CH
+                return currFrom.weight >= bestPath.getWeight() && currTo.weight >= bestPath.getWeight();
+            }
+
+            @Override
+            protected Path createAndInitPath()
+            {
+                bestPath = new Path4CH(graph, graph.getBaseGraph(), flagEncoder);
+                return bestPath;
+            }
+
+            @Override
+            public String getName()
+            {
+                return "astarbiCH";
+            }
+
+            @Override
+
+            public String toString()
+            {
+                return getName() + "|" + prepareWeighting;
+            }
+        };
+    }
+
+    private AbstractBidirAlgo createDijkstraBidirection( final Graph graph )
+    {
         return new DijkstraBidirectionRef(graph, prepareFlagEncoder, prepareWeighting, traversalMode)
         {
             @Override

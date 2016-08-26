@@ -74,6 +74,12 @@ public class DijkstraOneToManyTest extends AbstractRoutingAlgorithmTester
             {
                 return new DijkstraOneToMany(g, opts.getFlagEncoder(), opts.getWeighting(), traversalMode);
             }
+
+            @Override
+            public RoutingAlgorithmFactory getOriginalRAFactory()
+            {
+                return this;
+            }
         };
     }
 

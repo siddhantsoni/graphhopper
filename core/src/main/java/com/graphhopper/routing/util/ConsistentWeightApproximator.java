@@ -23,8 +23,9 @@ package com.graphhopper.routing.util;
  * Ikeda, T., Hsu, M.-Y., Imai, H., Nishimura, S., Shimoura, H., Hashimoto, T., Tenmoku, K., and
  * Mitoh, K. (1994). A fast algorithm for finding better routes by ai search techniques. In VNIS,
  * pages 291–296.
- * <p>
+ *
  * @author jansoe
+ * @author Peter Karich
  */
 public class ConsistentWeightApproximator
 {
@@ -33,27 +34,33 @@ public class ConsistentWeightApproximator
     public ConsistentWeightApproximator( WeightApproximator weightApprox )
     {
         uniDirApproximatorForward = weightApprox;
-        uniDirApproximatorReverse = weightApprox.duplicate();
+        uniDirApproximatorReverse = weightApprox.reverse();
     }
 
-    public void setSourceNode( int sourceNode )
+    public void setFrom( int from )
     {
-        uniDirApproximatorReverse.setGoalNode(sourceNode);
+        uniDirApproximatorReverse.setTo(from);
     }
 
-    public void setGoalNode( int goalNode )
+    public void setTo( int to )
     {
-        uniDirApproximatorForward.setGoalNode(goalNode);
+        uniDirApproximatorForward.setTo(to);
     }
 
-    public double approximate( int fromNode, boolean reverse )
+    public double approximate( int node, boolean reverse )
     {
         double weightApproximation = 0.5
-                * (uniDirApproximatorForward.approximate(fromNode) - uniDirApproximatorReverse.approximate(fromNode));
+                * (uniDirApproximatorForward.approximate(node) - uniDirApproximatorReverse.approximate(node));
 
         if (reverse)
             return -weightApproximation;
 
         return weightApproximation;
+    }
+
+    @Override
+    public String toString()
+    {
+        return uniDirApproximatorForward.toString();
     }
 }

@@ -17,8 +17,6 @@
  */
 package com.graphhopper.reader;
 
-import com.graphhopper.reader.ReaderWay;
-import com.graphhopper.reader.ReaderElement;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -39,8 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class implements the CH decorator for the routing algorithm factory and provides several
- * helper methods related to CH preparation and its vehicle profiles.
+ * This class implements the CH decorator and provides several helper methods related to CH
+ * preparation and its vehicle profiles.
  *
  * @author Peter Karich
  */
@@ -69,6 +69,7 @@ public class CHAlgoFactoryDecorator implements RoutingAlgorithmFactoryDecorator
         setWeightingsAsStrings(Arrays.asList(getDefaultWeighting()));
     }
 
+    @Override
     public void init( CmdArgs args )
     {
         setPreparationThreads(args.getInt("prepare.threads", getPreparationThreads()));
@@ -258,7 +259,7 @@ public class CHAlgoFactoryDecorator implements RoutingAlgorithmFactoryDecorator
     public List<String> getWeightingsAsStrings()
     {
         if (this.weightingsAsStrings.isEmpty())
-            throw new IllegalStateException("Potential bug: chWeightingList is empty");
+            throw new IllegalStateException("Potential bug: weightingsAsStrings is empty");
 
         return this.weightingsAsStrings;
     }
@@ -292,7 +293,7 @@ public class CHAlgoFactoryDecorator implements RoutingAlgorithmFactoryDecorator
                 return p;
         }
 
-        throw new IllegalArgumentException("Cannot find RoutingAlgorithmFactory for weighting map " + map);
+        throw new IllegalArgumentException("Cannot find CH RoutingAlgorithFactory for weighting map " + map);
     }
 
     /**
