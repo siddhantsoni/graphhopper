@@ -91,7 +91,7 @@ public class OSMTurnRelation {
                 int edgeId = iter.getEdge();
                 long wayId = osmReader.getOsmIdOfInternalEdge(edgeId);
                 if (edgeId != edgeIdFrom && this.restriction == Type.ONLY && wayId != this.toOsmWayId
-                        || this.restriction == Type.NOT && wayId == this.toOsmWayId && wayId >= 0) {
+                        || this.restriction == Type.NOT && wayId == this.toOsmWayId && wayId != -1) {
                     final TurnCostTableEntry entry = new TurnCostTableEntry();
                     entry.nodeVia = nodeVia;
                     entry.edgeFrom = edgeIdFrom;

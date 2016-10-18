@@ -847,7 +847,7 @@ public class OSMReader implements DataReader {
                     viaNodeID = member.getRef();
                 }
             }
-            if (fromWayID >= 0 && toWayID >= 0 && viaNodeID >= 0) {
+            if (fromWayID != -1 && toWayID != -1 && viaNodeID != -1) {
                 return new OSMTurnRelation(fromWayID, viaNodeID, toWayID, type);
             }
         }
