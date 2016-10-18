@@ -11,12 +11,17 @@ var retinaTiles = L.Browser.retina;
 var lyrk = L.tileLayer('https://tiles.lyrk.org/' + (retinaTiles ? 'lr' : 'ls') + '/{z}/{x}/{y}?apikey=6e8cfef737a140e2a58c8122aaa26077', {
     attribution: osmAttr + ', <a href="https://geodienste.lyrk.de/">Lyrk</a>'
 });
+// Siddhant
+//var omniscale = L.tileLayer.wms('https://maps.omniscale.net/v1/mapsgraph-bf48cc0b/tile', {
+//    layers: 'osm',
+//    attribution: osmAttr + ', &copy; <a href="http://maps.omniscale.com/">Omniscale</a>'
+//});
 
-var omniscale = L.tileLayer.wms('https://maps.omniscale.net/v1/mapsgraph-bf48cc0b/tile', {
+var omniscale = L.tileLayer.wms('https://apis.mapmyindia.com/advancedmaps/v1/rtvymede8c97meh77cilsoc4xc9reyq5/still_map/{z}/{x}/{y}.png', {
     layers: 'osm',
     attribution: osmAttr + ', &copy; <a href="http://maps.omniscale.com/">Omniscale</a>'
 });
-
+debugger;
 var openMapSurfer = L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
     attribution: osmAttr + ', <a href="http://korona.geog.uni-heidelberg.de/contact.html">GIScience Heidelberg</a>'
 });
